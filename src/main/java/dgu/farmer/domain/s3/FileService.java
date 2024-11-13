@@ -22,28 +22,41 @@ public class FileService {
 
     private final AmazonS3 amazonS3;
 
-    public String getPreSignedUrl(String prefix, String originalFileName) {
-        String fileName = sanitizeFileName(originalFileName);
-        String path = createPath(prefix, fileName);
+    public String getPreSignedUrl(String prefix, String fileName) {
+        if(StringUtils.hasText(prefix)) {
+            fileName = createPath(prefix, fileName);
+        }
 
-        return generatePreSignedUrl(path).toString();
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(bucket, fileName);
+        URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+        return url.toString();
     }
 
-    private URL generatePreSignedUrl(String filePath) {
-        Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 2); // 2 minutes
-        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, filePath)
-                .withMethod(HttpMethod.PUT)
-                .withExpiration(expiration);
-
-        return amazonS3.generatePresignedUrl(request);
+    private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String bucket, String fileName) {
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucket, fileName)
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(getPreSignedUrlExpiration());
+        generatePresignedUrlRequest.addRequestParameter(
+                Headers.S3_CANNED_ACL,
+                CannedAccessControlList.PublicRead.toString());
+        return generatePresignedUrlRequest;
     }
 
-    private String sanitizeFileName(String fileName) {
-        // 파일명에서 비허용 문자 제거, 필요 시 확장자 검증 추가
-        return fileName.replaceAll("[^a-zA-Z0-9\\.\\-_]", "");
+    private Date getPreSignedUrlExpiration() {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 2;
+        expiration.setTime(expTimeMillis);
+        return expiration;
+    }
+
+    private String createFileId() {
+        return UUID.randomUUID().toString();
     }
 
     private String createPath(String prefix, String fileName) {
-        return String.format("%s/%s-%s", prefix, UUID.randomUUID().toString(), fileName);
+        String fileId = createFileId();
+        return String.format("%s/%s", prefix, fileId + fileName);
     }
 }
