@@ -4,6 +4,8 @@ import dgu.farmer.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Builder
@@ -15,7 +17,7 @@ public class Danger {
     private Long dangerId;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "memberId")
     private Member member;
 
     @Column
@@ -32,5 +34,8 @@ public class Danger {
 
     @Column
     private Double longitude;
+
+    @Column
+    private LocalDateTime reportTime;
 
 }
