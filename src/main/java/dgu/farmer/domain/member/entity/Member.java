@@ -18,4 +18,11 @@ public class Member {
 
     @Column(nullable = false)
     private Integer points = 0;
+
+    public void updatePoints(int amount) {
+        if (this.points == null) {
+            this.points = 0;
+        }
+        this.points += amount;
+    }
 }
