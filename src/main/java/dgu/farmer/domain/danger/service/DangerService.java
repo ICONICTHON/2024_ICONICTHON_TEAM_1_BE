@@ -5,6 +5,7 @@ import dgu.farmer.domain.danger.dto.DangerResponseDto;
 import dgu.farmer.domain.danger.entity.Danger;
 import dgu.farmer.domain.danger.repository.DangerRepository;
 import dgu.farmer.domain.member.repository.MemberRepository;
+import dgu.farmer.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class DangerService {
     }
 
     @Transactional
-    public Long createDanger(DangerRequestDto requestDto) {
+    public Long createDanger(DangerRequestDto requestDto, Long memberId) {
         Danger danger = Danger.builder()
                 .buildingName(requestDto.getBuildingName())
                 .content(requestDto.getContent())
@@ -37,6 +38,12 @@ public class DangerService {
                 .reportTime(requestDto.getReportTime())
                 .build();
         dangerRepository.save(danger);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        member.updatePoints(300);
+        memberRepository.save(member);
+
         return danger.getDangerId();
     }
 }

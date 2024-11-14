@@ -21,8 +21,8 @@ public class DangerController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createDanger(@RequestBody DangerRequestDto requestDto) {
-        Long dangerId = dangerService.createDanger(requestDto);
+    public ResponseEntity<Long> createDanger(@RequestBody DangerRequestDto requestDto, @RequestParam("memberId") Long memberId) {
+        Long dangerId = dangerService.createDanger(requestDto, memberId);
         return ResponseEntity.ok(dangerId);
     }
 }
