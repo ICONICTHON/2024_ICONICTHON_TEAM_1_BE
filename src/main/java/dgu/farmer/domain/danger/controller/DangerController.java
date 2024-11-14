@@ -26,10 +26,10 @@ public class DangerController {
     }
 
     @Operation(summary = "Create danger", description = "새로운 위험 요소를 생성합니다.")
-    @PostMapping
+    @PostMapping("/{memberId}")
     public ResponseEntity<Long> createDanger(
             @Parameter(description = "위험 요소 생성 요청 정보", required = true) @RequestBody DangerRequestDto requestDto,
-            @Parameter(description = "회원 ID", required = true) @RequestParam("memberId") Long memberId) {
+            @Parameter(description = "회원 ID", required = true) @PathVariable Long memberId) {
         Long dangerId = dangerService.createDanger(requestDto, memberId);
         return ResponseEntity.ok(dangerId);
     }
