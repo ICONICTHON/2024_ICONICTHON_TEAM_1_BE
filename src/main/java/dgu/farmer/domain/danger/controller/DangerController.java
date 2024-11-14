@@ -33,4 +33,12 @@ public class DangerController {
         Long dangerId = dangerService.createDanger(requestDto, memberId);
         return ResponseEntity.ok(dangerId);
     }
+
+    @Operation(summary = "Get danger by ID", description = "특정 위험 요소의 상세 정보를 가져옵니다.")
+    @GetMapping("/detail/{dangerId}")
+    public ResponseEntity<DangerResponseDto> getDangerById(
+            @Parameter(description = "위험 요소 ID", required = true) @PathVariable Long dangerId) {
+        return ResponseEntity.ok(dangerService.getDangerById(dangerId));
+    }
+
 }

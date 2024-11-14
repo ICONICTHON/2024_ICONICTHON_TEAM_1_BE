@@ -23,7 +23,7 @@ public class DangerService {
     public List<DangerResponseDto> getAllDangers() {
         return dangerRepository.findAll().stream()
                 .map(danger -> new DangerResponseDto(danger.getDangerId(), danger.getBuildingName(),
-                        danger.getLatitude(), danger.getLongitude(), danger.getContent()))
+                        danger.getLatitude(), danger.getLongitude(), danger.getContent(), danger.getImageUrl(), danger.getReportTime()))
                 .collect(Collectors.toList());
     }
 
@@ -45,5 +45,20 @@ public class DangerService {
         memberRepository.save(member);
 
         return danger.getDangerId();
+    }
+
+    @Transactional
+    public DangerResponseDto getDangerById(Long dangerId) {
+        Danger danger = dangerRepository.findById(dangerId)
+                .orElseThrow(() -> new RuntimeException("Danger not found"));
+        return DangerResponseDto.builder()
+                .dangerId(danger.getDangerId())
+                .buildingName(danger.getBuildingName())
+                .longitude(danger.getLongitude())
+                .latitude(danger.getLatitude())
+                .content(danger.getContent())
+                .imageUrl(danger.getImageUrl())
+                .reportTime(danger.getReportTime())
+                .build();
     }
 }
