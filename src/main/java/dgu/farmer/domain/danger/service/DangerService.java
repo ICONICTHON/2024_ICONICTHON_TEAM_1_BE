@@ -29,6 +29,8 @@ public class DangerService {
 
     @Transactional
     public Long createDanger(DangerRequestDto requestDto, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
         Danger danger = Danger.builder()
                 .buildingName(requestDto.getBuildingName())
                 .content(requestDto.getContent())
@@ -36,11 +38,9 @@ public class DangerService {
                 .latitude(requestDto.getLatitude())
                 .longitude(requestDto.getLongitude())
                 .reportTime(requestDto.getReportTime())
+                .member(member)
                 .build();
         dangerRepository.save(danger);
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
         member.updatePoints(300);
         memberRepository.save(member);
 
