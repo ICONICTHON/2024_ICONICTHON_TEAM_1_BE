@@ -4,6 +4,7 @@ import dgu.farmer.domain.danger.dto.DangerRequestDto;
 import dgu.farmer.domain.danger.dto.DangerResponseDto;
 import dgu.farmer.domain.danger.entity.Danger;
 import dgu.farmer.domain.danger.repository.DangerRepository;
+import dgu.farmer.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DangerService {
     private final DangerRepository dangerRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
     public List<DangerResponseDto> getAllDangers() {
