@@ -22,8 +22,8 @@ public class DangerService {
     @Transactional(readOnly = true)
     public List<DangerResponseDto> getAllDangers() {
         return dangerRepository.findAll().stream()
-                .map(danger -> new DangerResponseDto(danger.getBuildingName(),
-                        danger.getLatitude(), danger.getLongitude()))
+                .map(danger -> new DangerResponseDto(danger.getDangerId(), danger.getBuildingName(),
+                        danger.getLatitude(), danger.getLongitude(), danger.getContent()))
                 .collect(Collectors.toList());
     }
 
